@@ -24,4 +24,10 @@
 
 - [ ] Schedule the executions on the DTU HPC as batch jobs, on CPU nodes and GPU nodes.
 
-- [ ] Plot the results and write up the conclusions (latex document).
+- [ ] Plot the results and write up the conclusions.
+
+
+**To be prepared:**
+
+- [ ] Write down markdown files that explains the findings
+- [ ] Prepare the 15/20 minutes presentation of the findings.
