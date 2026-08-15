@@ -1,16 +1,15 @@
 #!/bin/bash
 
 # 10387 - SCIQIS
-# CPU sweep: every framework x every circuit x a range of qubit counts.
-# Submit from the repo root:  bsub < batch/sweep_cpu.sub
 
 #BSUB -J sciqis_cpu
 #BSUB -q hpcintro
-#BSUB -n 24
-#BSUB -R "rusage[mem=4GB] span[hosts=1]"
-#BSUB -W 05:00
+#BSUB -n 1
+#BSUB -R "rusage[mem=40GB] span[hosts=1]"
+#BSUB -W 24:00
 #BSUB -o logs/sciqis_cpu_%J.out
 #BSUB -e logs/sciqis_cpu_%J.err
+
 
 cd "$LS_SUBCWD" || exit 1
 export PATH="$HOME/.local/bin:$PATH"
@@ -20,24 +19,13 @@ uv sync --frozen || exit 1
 
 FRAMEWORKS="qiskit pennylane cirq braket qulacs"
 CIRCUITS="ghz random qft"
-QUBITS="4 6 8 10 12 14 16 18 20 22 24 26 28"
+QUBITS="4 6 8 10 12 14 16 18 20 22 24 26 28 30"
 
-# Cirq and Braket are pure NumPy and fall off a cliff well before the C++
-# engines, so stop them early rather than burning the wall clock on one run.
-max_n () {
-    case "$1" in
-        cirq|braket) echo 20 ;;
-        *)           echo 28 ;;
-    esac
-}
-
-# --- scaling with qubit count -------------------------------------------
-for fw in $FRAMEWORKS; do
+for n in $QUBITS; do
     for c in $CIRCUITS; do
-        for n in $QUBITS; do
-            [ "$n" -gt "$(max_n "$fw")" ] && continue
-            echo "== $fw $c n=$n"
-            uv run src/main.py -f "$fw" -c "$c" -n "$n" --reps 3 --device cpu
+        for fw in $FRAMEWORKS; do
+            echo "== n=$n $c $fw"
+            uv run src/main.py -f "$fw" -c "$c" -n "$n" --reps 3 || echo "   FAILED"
         done
     done
 done
@@ -45,9 +33,10 @@ done
 # --- cross-framework agreement check ------------------------------------
 for c in $CIRCUITS; do
     for fw in $FRAMEWORKS; do
-        uv run src/main.py -f "$fw" -c "$c" -n 10 --reps 1 --device cpu --save-state
+        uv run src/main.py -f "$fw" -c "$c" -n 10 --reps 1 --save-state
     done
     uv run src/verify.py -c "$c" -n 10
 done
 
+uv run src/report.py --plot
 exit 0
