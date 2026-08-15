@@ -3,5 +3,22 @@ name = "sciqis-project"
 version = "0.1.0"
 description = "Compare different quantum computing frameworks"
 readme = "README.md"
-requires-python = ">=3.13"
-dependencies = []
+requires-python = ">=3.11,<3.13"
+dependencies = [
+    "numpy>=1.26",
+    "qiskit>=1.2",
+    "qiskit-aer>=0.15",
+    "pennylane>=0.38",
+    "pennylane-lightning>=0.38",
+    "cirq-core>=1.4",
+    "amazon-braket-sdk>=1.125",
+    "qulacs>=0.6",
+]
+
+# Installed only on the HPC GPU nodes: uv sync --group gpu
+# These are CUDA 12 / Linux x86_64 wheels.
+[dependency-groups]
+gpu = [
+    "qiskit-aer-gpu>=0.15",
+    "pennylane-lightning-gpu>=0.38",
+]

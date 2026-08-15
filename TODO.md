@@ -6,7 +6,7 @@
 
 - [ ] Verify that the frameworks agree on the results before comparing any timings
 
-- [ ] Measure how runtime and memory grow with qubit number and depth, and compare that to the expected 2^n scaling of a statevector.
+- [ ] Measure how runtime and memory grow with the qubit number, and compare that to the expected 2^n scaling of a statevector. Note that runtime also carries the gate count, so the expected growth is n*2^n for GHZ and n^2*2^n for the random and QFT circuits; only the memory should be pure 2^n.
 
 - [ ] Explain the differences I find, looking at the simulation method used, the numerical precision and how the gates are applied.
 

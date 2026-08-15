@@ -35,7 +35,23 @@ help: ## Display this help message
 sync: ## Run the uv sync
 	@${UV} sync
 
-run: ## Run the main.py
-	@${UV} run ${SRC_FOLDER}/main.py
+N ?= 8
 
-.PHONY: run
+verify: ## Check all frameworks agree (override with N=..)
+	@for c in ghz random qft; do \
+		for f in qiskit pennylane cirq braket qulacs; do \
+			${UV} run ${SRC_FOLDER}/main.py -f $$f -c $$c -n ${N} --reps 1 --save-state > /dev/null; \
+		done; \
+		${UV} run ${SRC_FOLDER}/verify.py -c $$c -n ${N} || exit 1; \
+	done
+
+bench-local: ## Small CPU sweep sized for this machine, not the HPC
+	@./batch/sweep_local.sh
+
+report: ## Print tables from results/*.jsonl (add PLOT=1 for pngs)
+	@${UV} run ${SRC_FOLDER}/report.py $(if ${PLOT},--plot,)
+
+clean-results: ## Delete everything in results/
+	@rm -rf results
+
+.PHONY: verify bench-local report clean-results
