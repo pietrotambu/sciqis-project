@@ -35,23 +35,21 @@ help: ## Display this help message
 sync: ## Run the uv sync
 	@${UV} sync
 
-N ?= 8
+hpc-cpu: ## Submit the CPU jobs
+	@mkdir -p logs results
+	@bsub < batch/sciqis_cpu.sub
 
-verify: ## Check all frameworks agree (override with N=..)
-	@for c in ghz random qft; do \
-		for f in qiskit pennylane cirq braket qulacs; do \
-			${UV} run ${SRC_FOLDER}/main.py -f $$f -c $$c -n ${N} --reps 1 --save-state > /dev/null; \
-		done; \
-		${UV} run ${SRC_FOLDER}/verify.py -c $$c -n ${N} || exit 1; \
-	done
+hpc-gpu: ## Submit the GPU jobs
+	@mkdir -p logs results
+	@bsub < batch/sciqis_gpu.sub
 
-bench-local: ## Small CPU sweep sized for this machine, not the HPC
-	@./batch/sweep_local.sh
-
-report: ## Print tables from results/*.jsonl (add PLOT=1 for pngs)
-	@${UV} run ${SRC_FOLDER}/report.py $(if ${PLOT},--plot,)
+plot: ## Generate analysis plots from results/*.jsonl into figures/
+	@${UV} run ${SRC_FOLDER}/plot_analysis.py
 
 clean-results: ## Delete everything in results/
 	@rm -rf results
 
-.PHONY: verify bench-local report clean-results
+clean-figures: ## Delete everything in figures/
+	@rm -rf figures
+
+.PHONY: hpc-cpu hpc-gpu plot clean-results clean-figures

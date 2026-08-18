@@ -36,15 +36,6 @@ def measure(fn, reps):
     return [t / loops for t in timeit.Timer(fn).repeat(repeat=reps, number=loops)]
 
 
-def to_little_endian(state, n):
-    """qubit 0 as MSB -> qubit 0 as LSB, the convention verify.py expects.
-
-    Qiskit and Qulacs are already little-endian; Cirq, PennyLane and Braket are
-    not, so their modules call this on the way out.
-    """
-    return state.reshape((2,) * n).transpose(range(n - 1, -1, -1)).reshape(-1)
-
-
 def main():
     p = argparse.ArgumentParser(description="statevector benchmark")
     p.add_argument("-f", "--framework", required=True, choices=FRAMEWORKS)
@@ -52,22 +43,21 @@ def main():
     p.add_argument("-n", "--nqubits", type=int, required=True)
     p.add_argument("--reps", type=int, default=3)
     p.add_argument("--device", default="cpu", choices=["cpu", "gpu"])
-    p.add_argument("--save-state", action="store_true")
     p.add_argument("--results", default="results")
     p.add_argument("--out", default=None)
     args = p.parse_args()
 
-    backend = importlib.import_module(f"bench_{args.framework}")
+    backend = importlib.import_module(f"frameworks.{args.framework}")
     # Whatever it costs to get the libraries loaded, before any circuit exists.
     # Subtracting this from the peak isolates what the simulation itself costs.
     baseline_rss = rss_mb()
 
     os.makedirs(args.results, exist_ok=True)
-    build, run, n_gates, get_state = backend.prepare(
+    build, run, n_gates = backend.prepare(
         args.circuit, args.nqubits, args.device
     )
 
-    result = run()  # warm-up, and the result that may be saved below
+    run()  # warm-up
     build_times = measure(build, args.reps)
     run_times = measure(run, args.reps)
 
@@ -90,11 +80,6 @@ def main():
     with open(out, "a") as fh:
         fh.write(json.dumps(record) + "\n")
     print(json.dumps(record))
-
-    if args.save_state:
-        name = f"state_{backend.FRAMEWORK}_{args.circuit}_n{args.nqubits}.npy"
-        import numpy as np
-        np.save(os.path.join(args.results, name), get_state(result))
 
 
 if __name__ == "__main__":

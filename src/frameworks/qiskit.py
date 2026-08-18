@@ -65,7 +65,4 @@ def prepare(circuit, n, device):
     def run():
         return sim.run(transpiled).result()
 
-    def get_state(result):
-        return np.asarray(result.get_statevector(), dtype=np.complex128)
-
-    return build, run, CIRCUITS[circuit](n).size(), get_state
+    return build, run, CIRCUITS[circuit](n).size()

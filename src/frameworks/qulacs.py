@@ -66,8 +66,4 @@ def prepare(circuit, n, _device):
         built.update_quantum_state(state)
         return state
 
-    def get_state(result):
-        # Already little-endian, same as Qiskit - no reordering needed.
-        return np.asarray(result.get_vector(), dtype=np.complex128)
-
-    return build, run, built.get_gate_count(), get_state
+    return build, run, built.get_gate_count()

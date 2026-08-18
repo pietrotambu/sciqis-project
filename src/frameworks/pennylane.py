@@ -6,8 +6,6 @@ import numpy as np
 import pennylane as qml
 from pennylane.tape import QuantumScript
 
-import main
-
 FRAMEWORK = "pennylane"
 SEED = 1234
 
@@ -60,7 +58,4 @@ def prepare(circuit, n, device):
     def run():
         return dev.execute(tape)
 
-    def get_state(result):
-        return main.to_little_endian(np.asarray(result, dtype=np.complex128), n)
-
-    return build, run, len(tape.operations), get_state
+    return build, run, len(tape.operations)

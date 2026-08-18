@@ -1,5 +1,7 @@
 .venv
+.venv-gpu
+
 __pycache__/
 logs/
-# statevectors are large and reproducible; the .jsonl timings are kept
+
 results/*.npy

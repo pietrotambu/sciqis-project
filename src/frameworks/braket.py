@@ -6,8 +6,6 @@ import numpy as np
 from braket.circuits import Circuit
 from braket.devices import LocalSimulator
 
-import main
-
 FRAMEWORK = "braket"
 SEED = 1234
 
@@ -62,8 +60,4 @@ def prepare(circuit, n, _device):
     def run():
         return sim.run(built, shots=0).result()
 
-    def get_state(result):
-        state = np.asarray(result.values[0], dtype=np.complex128)
-        return main.to_little_endian(state, n)
-
-    return build, run, len(built.instructions), get_state
+    return build, run, len(built.instructions)

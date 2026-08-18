@@ -5,8 +5,6 @@ Cirq backend - pure NumPy reference, CPU only
 import cirq
 import numpy as np
 
-import main
-
 FRAMEWORK = "cirq"
 SEED = 1234
 
@@ -57,8 +55,4 @@ def prepare(circuit, n, _device):
     def run():
         return sim.simulate(built, qubit_order=qubits)
 
-    def get_state(result):
-        state = np.asarray(result.final_state_vector, dtype=np.complex128)
-        return main.to_little_endian(state, n)
-
-    return build, run, len(list(built.all_operations())), get_state
+    return build, run, len(list(built.all_operations()))
