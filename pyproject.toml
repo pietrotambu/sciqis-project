@@ -16,9 +16,11 @@ dependencies = [
 ]
 
 # Installed only on the HPC GPU nodes: uv sync --group gpu
-# These are CUDA 12 / Linux x86_64 wheels.
+# qiskit-aer-gpu (the CUDA-12 build) is abandoned upstream at 0.15.1, which
+# predates qiskit 2.x's API and fails to import. qiskit-aer-gpu-cu11 tracks
+# qiskit-aer's releases and works fine on A100s via driver forward-compat.
 [dependency-groups]
 gpu = [
-    "qiskit-aer-gpu>=0.15",
+    "qiskit-aer-gpu-cu11>=0.17",
     "pennylane-lightning-gpu>=0.38",
 ]
