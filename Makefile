@@ -1,4 +1,3 @@
-
 UV = uv
 SRC_FOLDER = ./src
 
@@ -33,7 +32,14 @@ help: ## Display this help message
 
 
 sync: ## Run the uv sync
-	@${UV} sync
+	@env -u VIRTUAL_ENV UV_PROJECT_ENVIRONMENT=.venv ${UV} sync
+
+sync-gpu: ## Sync the GPU dependencies into .venv-gpu
+	@env -u VIRTUAL_ENV UV_PROJECT_ENVIRONMENT=.venv-gpu ${UV} sync --group gpu
+
+run: ## Run one simulation (usage: make run [FW=qiskit] [CIRCUIT=ghz] [N=10] [DEVICE=cpu] [REPS=3])
+	@mkdir -p results
+	@${UV} run ${SRC_FOLDER}/main.py -f $(or $(FW),qiskit) -c $(or $(CIRCUIT),ghz) -n $(or $(N),10) --device $(or $(DEVICE),cpu) --reps $(or $(REPS),3)
 
 hpc-cpu: ## Submit the CPU jobs
 	@mkdir -p logs results
@@ -43,13 +49,7 @@ hpc-gpu: ## Submit the GPU jobs
 	@mkdir -p logs results
 	@bsub < batch/sciqis_gpu.sub
 
-plot: ## Generate analysis plots from results/*.jsonl into figures/
-	@${UV} run ${SRC_FOLDER}/plot_analysis.py
-
 clean-results: ## Delete everything in results/
 	@rm -rf results
 
-clean-figures: ## Delete everything in figures/
-	@rm -rf figures
-
-.PHONY: hpc-cpu hpc-gpu plot clean-results clean-figures
+.PHONY: sync sync-gpu run hpc-cpu hpc-gpu clean-results

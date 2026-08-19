@@ -19,7 +19,7 @@ def ghz(n):
 
 
 def random(n):
-    # Square circuit: depth == width, the usual convention for random-circuit
+    # Square circuit: depth == width
     # benchmarking. Same seed, same draw order and same gate set in every
     # framework, so all of them build the identical circuit.
     angles = np.random.default_rng(SEED).uniform(0, 2 * np.pi, size=(n, n, 2))
@@ -28,7 +28,7 @@ def random(n):
         for q in range(n):
             qc.rx(angles[layer, q, 0], q)
             qc.rz(angles[layer, q, 1], q)
-        for q in range(layer % 2, n - 1, 2):  # brickwork: alternate the pairing
+        for q in range(layer % 2, n - 1, 2):
             qc.cz(q, q + 1)
     return qc
 
@@ -51,7 +51,7 @@ def prepare(circuit, n, device):
     sim = AerSimulator(
         method="statevector",
         device=device.upper(),
-        precision="double",  # complex128 project-wide, not configurable on purpose
+        precision="double",  # this means complex128
         max_parallel_threads=1,
     )
 

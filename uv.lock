@@ -1347,6 +1347,8 @@ dependencies = [
     { name = "qiskit" },
     { name = "qiskit-aer" },
     { name = "qulacs" },
+    { name = "scipy", version = "1.17.1", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.12'" },
+    { name = "scipy", version = "1.18.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.12'" },
 ]
 
 [package.dev-dependencies]
@@ -1365,6 +1367,7 @@ requires-dist = [
     { name = "qiskit", specifier = ">=1.2" },
     { name = "qiskit-aer", specifier = ">=0.15" },
     { name = "qulacs", specifier = ">=0.6" },
+    { name = "scipy", specifier = ">=1.13" },
 ]
 
 [package.metadata.requires-dev]

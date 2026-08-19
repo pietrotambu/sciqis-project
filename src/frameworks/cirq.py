@@ -16,7 +16,7 @@ def ghz(q):
 
 
 def random(q):
-    # Square circuit: depth == width, the usual convention for random-circuit
+    # Square circuit: depth == width
     # benchmarking. Same seed, same draw order and same gate set in every
     # framework, so all of them build the identical circuit.
     n = len(q)
@@ -25,7 +25,7 @@ def random(q):
         for i in range(n):
             yield cirq.rx(angles[layer, i, 0])(q[i])
             yield cirq.rz(angles[layer, i, 1])(q[i])
-        for i in range(layer % 2, n - 1, 2):  # brickwork: alternate the pairing
+        for i in range(layer % 2, n - 1, 2):
             yield cirq.CZ(q[i], q[i + 1])
 
 

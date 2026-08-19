@@ -19,7 +19,7 @@ def ghz(n):
 
 
 def random(n):
-    # Square circuit: depth == width, the usual convention for random-circuit
+    # Square circuit: depth == width
     # benchmarking. Same seed, same draw order and same gate set in every
     # framework, so all of them build the identical circuit.
     angles = np.random.default_rng(SEED).uniform(0, 2 * np.pi, size=(n, n, 2))
@@ -28,7 +28,7 @@ def random(n):
         for q in range(n):
             ops.append(qml.RX(angles[layer, q, 0], q))
             ops.append(qml.RZ(angles[layer, q, 1], q))
-        for q in range(layer % 2, n - 1, 2):  # brickwork: alternate the pairing
+        for q in range(layer % 2, n - 1, 2):
             ops.append(qml.CZ([q, q + 1]))
     return ops
 
